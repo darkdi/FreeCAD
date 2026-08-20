@@ -60,6 +60,22 @@ find "${copy_dir}" -name \*.lib -delete
 find "${copy_dir}" -name \*.exp -delete
 rm -rf "${copy_dir}/include"
 
+# CopyLibpackDirectories.cmake installs the entire LibPack bin directory into the staging tree.
+# Remove compiler/debugger and Qt build/deployment tools that are useful when developing FreeCAD,
+# but are not required by the installed application. Keep runtime helpers such as assistant.exe,
+# Python, Graphviz, CalculiX and Gmsh intact.
+find "${copy_dir}/bin" -maxdepth 1 -type f \( \
+    -iname 'linguist.exe' -o \
+    -iname 'llc.exe' -o \
+    -iname 'lld*.exe' -o \
+    -iname 'lli.exe' -o \
+    -iname 'lrelease*.exe' -o \
+    -iname 'ltext2id.exe' -o \
+    -iname 'lupdate*.exe' -o \
+    -iname 'qmake*.exe' -o \
+    -iname 'windeployqt*.exe' \
+\) -delete
+
 # Qt needs to find its plugins relative to the executable directory.
 if [ ! -f "${copy_dir}/bin/qt.conf" ]; then
     printf '[Paths]\nPrefix = ..\n' > "${copy_dir}/bin/qt.conf"
