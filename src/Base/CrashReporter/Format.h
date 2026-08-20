@@ -87,8 +87,12 @@ enum class OS : std::uint8_t
     Linux,
     macOS,
     Windows,
-    BSD
+    BSDFamily
 };
+
+// OS is serialized directly into the version-1 fcrash header. Keep the reserved BSD slot at 4
+// even though the C++ enumerator name must avoid the BSD macro provided by <sys/param.h>.
+static_assert(static_cast<std::uint8_t>(OS::BSDFamily) == 4);
 
 enum class Architecture : std::uint8_t
 {
